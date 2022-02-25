@@ -29,18 +29,19 @@ class Listener(commands.Cog):
             # get ALL channels
             async with db.execute("SELECT channel FROM serverdata") as c:
                 channels = await c.fetchall()
+                channels = [item[0] for item in channels]
                 if not channels:
                     channels = [()]
-
             # get ALL banned users
             async with db.execute("SELECT user FROM bans") as c:
                 bans = await c.fetchall()
+                bans = [item[0] for item in bans]
                 if not bans:
                     bans = [()]
-            if msg.channel.id not in channels[0]:
+            if msg.channel.id not in channels:
                 return
 
-            if msg.author.id in bans[0]:
+            if msg.author.id in bans:
                 await msg.add_reaction("❌")
                 return
 
@@ -132,7 +133,7 @@ class Listener(commands.Cog):
             guild_icon = "https://logodownload.org/wp-content/uploads/2017/11/discord-logo-1-1.png"
 
         global_embed.set_thumbnail(url=guild_icon)
-        for channel in channels[0]:
+        for channel in channels:
             try:
                 load_channel = self.bot.get_channel(channel)
                 await load_channel.send(embed=global_embed)
